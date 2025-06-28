@@ -1,0 +1,7 @@
+pymc
+pybaseball
+pandas
+numpy
+matplotlib
+seaborn
+scikit-learn
