@@ -64,3 +64,40 @@ def simulate_season(idata, future_pa: int) -> np.ndarray:
     simulated_hrs = np.random.binomial(n=future_pa, p=posterior_theta)
     
     return simulated_hrs
+
+def run_hierarchical_model(data, features):
+    """
+    Fits a hierarchical Bayesian model to player data using PyMC.
+
+    Args:
+        data (pd.DataFrame): DataFrame containing player data (HR, PA, features).
+        features (list): List of feature names to use as predictors.
+
+    Returns:
+        pm.InferenceData: The InferenceData object containing the posterior draws.
+    """
+    coords = {"player": data.index.values, "features": features}
+
+    with pm.Model(coords=coords) as hierarchical_model:
+        # Population-level parameters (hyperpriors)
+        mu_alpha = pm.Normal('mu_alpha', mu=-2.5, sigma=1)
+        sigma_alpha = pm.HalfNormal('sigma_alpha', sigma=1)
+
+        # Regression coefficients for advanced stats
+        betas = pm.Normal('betas', mu=0, sigma=0.5, dims='features')
+
+        # Player-level random effects (hierarchical priors)
+        alpha = pm.Normal('alpha', mu=mu_alpha, sigma=sigma_alpha, dims="player")
+
+        # The log-odds of a player's true HR rate
+        theta_logits = alpha + pm.math.dot(data[features].values, betas)
+
+        # Convert from log-odds to probability
+        theta = pm.Deterministic('theta', pm.math.invlogit(theta_logits))
+
+        # Likelihood (the data) - CORRECTED TO USE 'PA_target' AND 'HR_target'
+        pm.Binomial('likelihood', n=data['PA_target'], p=theta, observed=data['HR_target'])
+
+        idata = pm.sample(2000, tune=2000, cores=2)
+
+    return idata

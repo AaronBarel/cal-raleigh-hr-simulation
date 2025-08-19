@@ -1,8 +1,0 @@
-LICENSE
-README.md
-pyproject.toml
-src/mcmc_hr_prediction.egg-info/PKG-INFO
-src/mcmc_hr_prediction.egg-info/SOURCES.txt
-src/mcmc_hr_prediction.egg-info/dependency_links.txt
-src/mcmc_hr_prediction.egg-info/requires.txt
-src/mcmc_hr_prediction.egg-info/top_level.txt
