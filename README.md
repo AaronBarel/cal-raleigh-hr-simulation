@@ -7,6 +7,7 @@ The data is sourced from Fangraphs. It includes batting statistics of players fr
 
 ## Project Structure
 
+```
 cal-raleigh-hr-simulation/
 ├── .gitignore
 ├── LICENSE
@@ -22,7 +23,7 @@ cal-raleigh-hr-simulation/
     ├── modeling.py
     ├── processing.py
     └── visualization.py
-
+```
 ## Beta Binomial Projections
 
 ### 2025 Season Data (as of 2025-08-19)
@@ -36,4 +37,7 @@ Base Model: ISO, Barrel%, HardHit%
 Enhanced Model: ISO, Barrel%, HardHit%, SLG, Med%, BB%, Age
 
 ![Hierarchical Models Comparison](figures/hierarchical_models.png)
+
+## To Do:
+The idea is that a player's performance is more likely to be influenced by players with a similar profile rather than the entire league. We'll use the k-Nearest Neighbors (KNN) algorithm to identify these peers. Once we have a "cohort" of similar players, we can train a new hierarchical model on their data alone.
 
