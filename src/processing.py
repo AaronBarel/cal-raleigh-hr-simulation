@@ -3,7 +3,8 @@
 import pandas as pd
 from sklearn.preprocessing import StandardScaler
 from sklearn.neighbors import NearestNeighbors
-
+import numpy as np
+from datetime import datetime
 def load_data(filepath='../data/raw/fangraphs-leaderboards.csv'):
     """Loads the raw FanGraphs data."""
     return pd.read_csv(filepath)
@@ -25,7 +26,7 @@ def get_player_career_stats(df, player_name, end_year=2024):
         'HR_RATE': total_hr / total_pa,
     }
     
-    for col in ['BB%', 'SLG', 'ISO', 'Med%', 'Hard%', 'Barrel%', 'HardHit%']:
+    for col in ['BB%', 'SLG', 'ISO', 'Med%', 'Hard%', 'Barrel%', 'HardHit%', 'Age']:
         weighted_avg = (player_df[col] * player_df['PA']).sum() / total_pa
         stats[col] = weighted_avg
         
@@ -62,16 +63,31 @@ def find_similar_players_knn(df, target_player_name, features, n_neighbors=10):
     
     return similar_players_df
 
+
 def create_panel_data_for_modeling(df, start_year=2015, end_year=2024):
     """
     Restructures data to create a 3-year history -> 1-year outcome format.
-    This is perfect for the hierarchical model.
+    Adds a player's age for each season.
     """
-    df_filtered = df[(df['Season'] >= start_year) & (df['Season'] <= end_year) & (df['PA'] >= 250)]
-    
+    df_filtered = df[(df['Season'] >= start_year) & (df['Season'] <= end_year) & (df['PA'] >= 250)].copy()
+
+    # Calculate age for each player/season if not already in the data
+    # We use a simple approximation (Year - Birth Year)
+    # The Fangraphs data should have a `BirthDate` column.
+    if 'Age' not in df_filtered.columns and 'BirthDate' in df_filtered.columns:
+        df_filtered['Age'] = df_filtered['Season'] - pd.to_datetime(df_filtered['BirthDate']).dt.year
+    elif 'Age' not in df_filtered.columns:
+        # Fallback or placeholder for age if BirthDate isn't available
+        # You would need to manually add player birth dates to your raw data
+        df_filtered['Age'] = np.nan
+        
     # Use lag to get previous seasons' stats
-    df_filtered = df_filtered.sort_values(['Name', 'Season'])
-    for col in ['PA', 'HR', 'Barrel%', 'HardHit%', 'ISO']:
+    df_filtered.sort_values(['Name', 'Season'], inplace=True)
+    
+    # Define all the columns we want to lag
+    lag_cols = ['PA', 'HR', 'Barrel%', 'HardHit%', 'ISO', 'SLG', 'Med%', 'BB%', 'Age']
+    
+    for col in lag_cols:
         for i in range(1, 4): # Lags for t-1, t-2, t-3
             df_filtered[f'{col}_lag{i}'] = df_filtered.groupby('Name')[col].shift(i)
 
