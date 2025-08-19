@@ -1,0 +1,23 @@
+[project]
+name = "mcmc_hr_prediction"
+version = "0.1.0"
+description = "MCMC Simulation of MLB player HR outcomes"
+authors = [{name = "Aaron Barel"}]
+requires-python = ">=3.10"
+dependencies = [
+  "pandas",
+  "numpy",
+  "matplotlib",
+  "seaborn",
+  "pybaseball",
+  "scikit-learn",
+  "jupyterlab",
+  "pymc"
+]
+
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]
