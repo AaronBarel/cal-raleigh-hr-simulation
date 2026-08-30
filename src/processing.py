@@ -98,3 +98,14 @@ def create_panel_data_for_modeling(df, start_year=2015, end_year=2024):
     final_df = df_filtered.dropna()
     
     return final_df
+
+# --- Realised 2025 outcome -------------------------------------------------
+# Cal Raleigh's actual 2025 regular season line, for scoring the projections
+# that were made mid-season. HR/G are the widely reported final totals; PA is
+# his season total from the FanGraphs/Baseball-Reference batting page.
+CAL_RALEIGH_2025_ACTUAL = {
+    'Name': 'Cal Raleigh',
+    'HR': 60,
+    'PA': 705,
+    'G': 159,
+}
