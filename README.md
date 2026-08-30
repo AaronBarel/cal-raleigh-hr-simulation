@@ -9,6 +9,7 @@ The data is sourced from Fangraphs. It includes batting statistics of players fr
 
 ## Project Structure
 
+```
 cal-raleigh-hr-simulation/
 ├── .gitignore
 ├── LICENSE
@@ -27,10 +28,7 @@ cal-raleigh-hr-simulation/
     ├── modeling.py
     ├── processing.py
     └── visualization.py
-
-Notebooks 01 and 02 write their posterior simulations to `data/processed/`, so
-run them before notebook 03.
-
+```
 ## Beta Binomial Projections
 
 ### 2025 Season Data (as of 2025-08-19)
